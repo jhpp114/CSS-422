@@ -1,0 +1,43 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 4/11/2020 3:00:41 AM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :Lab1 Question     1
+00000000                             3  * Written by :Jun Hyung Park    
+00000000                             4  * Date       :04/08/2020    
+00000000                             5  * Description:Hello World Program   
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000                             9  
+00001000                            10  * Put program code here
+00001000  43F9 00001016             11      LEA     MESSAGE, A1     ; Load message into address resgister A1
+00001006  103C 000D                 12      MOVE.B  #13,    D0      ; Move the number   14 into data register 0
+0000100A  4E4F                      13      TRAP    #15             ; Displays Message 
+0000100C  103C 0009                 14      MOVE.B  #9, D0          ; #9 is terminate program
+00001010  4E4F                      15      TRAP    #15
+00001012                            16  
+00001012  FFFF FFFF                 17      SIMHALT             ; halt simulator
+00001016                            18  
+00001016                            19  * Put variables and constants here
+00001016  =0000000D                 20  CR  EQU $0D ; ASCII code for Carriage Return
+00001016  =0000000A                 21  LF  EQU $0A ;   ASCII code for Line Feed
+00001016= 48 45 4C 4C 4F 2C ...     22  MESSAGE DC.B    'HELLO, My Name is Jun Hyung Park',  CR, LF      ; Place ASCII string in memory at MESSAGE
+00001038= 54 68 69 73 20 70 ...     23          DC.B    'This program took me 10 minutes to finish, and ', CR, LF
+00001069= 49 20 68 6F 70 65 ...     24          DC.B    'I hope I can enjoy the 68k programming.', CR, LF
+00001092= 54 68 61 6E 6B 66 ...     25          DC.B    'Thankfully, Lab 1,question 1 is not that hard!', CR, LF, CR, LF ; Note that just LF (line feed or \n works too)
+000010C4= 54 68 61 6E 6B 20 ...     26          DC.B    'Thank you for listening!',0
+000010DD                            27      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+CR                  D
+LF                  A
+MESSAGE             1016
+START               1000

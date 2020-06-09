@@ -1,0 +1,91 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 4/12/2020 2:17:39 AM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000                             9  
+00001000                            10  * Put program code here
+00001000  43F9 00001056             11      LEA BASICPAY,   A1  
+00001006  700E                      12      MOVE.L  #14,    D0  
+00001008  4E4F                      13      TRAP    #15 
+0000100A  7004                      14      MOVE.L  #4, D0  
+0000100C  4E4F                      15      TRAP    #15 
+0000100E  207C 00004000             16      MOVE.L  #ADDRESS1,   A0  
+00001014  20C1                      17      MOVE.L  D1, (A0)+    
+00001016  4201                      18      CLR.B   D1  * clear data register 1 
+00001018                            19      *   Cut line audience
+00001018  43F9 00001062             20      LEA PROFITCUTLINE,  A1  
+0000101E  700E                      21      MOVE.L  #14,    D0  
+00001020  4E4F                      22      TRAP    #15 
+00001022  7004                      23      MOVE.L  #4, D0  
+00001024  4E4F                      24      TRAP    #15 
+00001026  20C1                      25      MOVE.L  D1, (A0)+   
+00001028  4201                      26      CLR.B   D1  * clear data register 1 because the value is in memory $4004 with 32 bits
+0000102A                            27      *   Gurantee per audience
+0000102A  43F9 00001077             28      LEA GRANTEE,    A1  
+00001030  700E                      29      MOVE.L  #14,    D0  
+00001032  4E4F                      30      TRAP    #15 
+00001034  7004                      31      MOVE.L  #4, D0  
+00001036  4E4F                      32      TRAP    #15 
+00001038  20C1                      33      MOVE.L  D1, (A0)+    * no need to increase the memory anymore last input from user
+0000103A  4201                      34      CLR.B   D1  * clear data register 1
+0000103C                            35      * BASIC CONDITION division 2
+0000103C  43F9 0000108F             36  AUDIONE LEA AUDIONEMESSAGE, A1  
+00001042  700E                      37          MOVE.L  #14,    D0  
+00001044  4E4F                      38          TRAP    #15 
+00001046                            39          * MOVE.L  #ADDRESS3,  (A0)  
+00001046  247C 00004010             40          MOVE.L  #AdrMath,    A2  * put AdrMath address to A2
+0000104C  24FC 00989680             41          MOVE.L  #10000000,  (A2)+   * put that number to pointer to A2
+00001052                            42          *MOVE.L    
+00001052                            43          
+00001052                            44      
+00001052                            45          
+00001052                            46      
+00001052                            47      
+00001052  FFFF FFFF                 48      SIMHALT             ; halt simulator
+00001056                            49  
+00001056  =0000000D                 50  CR  EQU $0D 
+00001056  =0000000A                 51  LF  EQU $0A
+00001056  =00004000                 52  ADDRESS1   EQU   $4000  
+00001056  =00004004                 53  ADDRESS2    EQU $4004
+00001056  =00004008                 54  ADDRESS3    EQU $4008
+00001056                            55  * BASIC MATH ADDRESS
+00001056  =00004010                 56  AdrMath EQU $4010   
+00001056                            57  
+00001056                            58  
+00001056= 42 41 49 53 49 43 ...     59  BASICPAY    DC.B    'BAISIC PAY ', 0 
+00001062= 4E 75 6D 62 65 72 ...     60  PROFITCUTLINE DC.B    'Number of Audiences ', 0
+00001077= 47 75 61 72 61 6E ...     61  GRANTEE DC.B    'Guarantee per audience ', 0
+0000108F                            62  
+0000108F= 31 30 30 30 30 30 ...     63  AUDIONEMESSAGE  DC.B    '1000000 people, expected pay: ', 0
+000010AE                            64  
+000010AE                            65  * Put variables and constants here
+000010AE                            66  
+000010AE                            67      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ADDRESS1            4000
+ADDRESS2            4004
+ADDRESS3            4008
+ADRMATH             4010
+AUDIONE             103C
+AUDIONEMESSAGE      108F
+BASICPAY            1056
+CR                  D
+GRANTEE             1077
+LF                  A
+PROFITCUTLINE       1062
+START               1000

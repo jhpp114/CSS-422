@@ -1,0 +1,171 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 5/2/2020 5:35:28 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  Pattern Finding and Cumulative Program    
+00000000                             3  * Written by :  Jun Hyung Park  
+00000000                             4  * Date       :  May 02, 2020            
+00000000                             5  * Description:  Pattern Finding and Cumulative Program  
+00000000                             6  *-----------------------------------------------------------
+00000000                             7  
+00000000                             8  *-------------------------------------------------------------------
+00000000                             9  * Some Pre-Defined Variables
+00000000  =0000B000                 10  CompareAddress EQU  $B000   
+00000000  =00004000                 11  StartAddress    EQU $4000
+00000000  =00006000                 12  EndAddress  EQU $6000   
+00000000                            13  
+00000000  =00008000                 14  Addr1   EQU $8000
+00000000  =00008004                 15  Addsum EQU  $8004   
+00000000  =00008010                 16  CarryBit    EQU $8010   
+00000000                            17  * Extra Variables just for my convenience
+00000000  =00000001                 18  ADDONE EQU  $1
+00000000                            19  *-------------------------------------------------------------------
+00000000                            20  *   Main Program Star
+00001000                            21      ORG    $1000
+00001000                            22  START:                  ; first instruction of program
+00001000  43F9 00001110             23      LEA WelcomeMessage, A1  
+00001006  103C 000E                 24      MOVE.B  #14,    D0   
+0000100A  4E4F                      25      TRAP    #15 
+0000100C  4279 00008004             26      CLR.W   AddSum  
+00001012  4279 00008010             27      CLR.W   CarryBit    
+00001018                            28  * Setting up the B000 value and matched on second line  
+00001018  13FC 00AA 0000B000        29      MOVE.B #$AA,     CompareAddress  
+00001020                            30      *MOVE.B  #$AA,   $4551     
+00001020  11FC 00AA 6000            31      MOVE.B  #$AA,   $6000                
+00001026                            32          
+00001026                            33  * Put 4000 to A3
+00001026  367C 4000                 34      MOVEA.W #StartAddress,   A3  
+0000102A                            35  *-------------------------------------------------------------------          
+0000102A                            36  SEARCH
+0000102A  1013                      37      MOVE.B  (A3),   D0  
+0000102C  B039 0000B000             38      CMP.B   CompareAddress, D0  * Same then found it  
+00001032  6700 0014                 39      BEQ FOUND   
+00001036  B7FC 00006000             40      CMPA.L  #EndAddress,    A3    
+0000103C  6700 0014                 41      BEQ NOTFOUND    
+00001040  6000 0002                 42      BRA MOVENEXT    
+00001044                            43  *-------------------------------------------------------------------        
+00001044                            44  MOVENEXT
+00001044  524B                      45      ADDA.W  #ADDONE, A3  
+00001046  60E2                      46      BRA SEARCH
+00001048                            47  *-------------------------------------------------------------------
+00001048                            48  FOUND
+00001048  23CB 00008000             49      MOVE.L  A3,  Addr1  * put A3 data to Add1
+0000104E  6000 0010                 50      BRA SETUPADD
+00001052                            51  *-------------------------------------------------------------------
+00001052                            52  NOTFOUND
+00001052  23FC 00004000 00008000    53      MOVE.L  #StartAddress, Addr1 * Store $4000 to Addr1 if not found   
+0000105C  6000 0002                 54      BRA SETUPADD
+00001060                            55  *-------------------------------------------------------------------      
+00001060                            56  SETUPADD
+00001060  2879 00008000             57      MOVEA.L Addr1, A4   
+00001066                            58  * Add seres of bytes stored in 256 consecutive memory location beginning at address Addr1
+00001066                            59  ADDCONSECUTIVE
+00001066                            60      *CLR.W   
+00001066                            61      * use whatever Addr1 is and put it in A4
+00001066                            62           
+00001066  121C                      63      MOVE.B  (A4)+,  D1  * Put whatever A4 is pointing to D1 
+00001068  D379 00008004             64      ADD.W   D1, Addsum 
+0000106E  6500 000E                 65      BCS CARRYEXIST
+00001072  5243                      66      ADD.W   #1, D3  
+00001074  B67C 00FF                 67      CMP.W   #255,   D3
+00001078  6E00 000E                 68      BGT DONE    
+0000107C  60E8                      69      BRA ADDCONSECUTIVE
+0000107E                            70     
+0000107E                            71  *-------------------------------------------------------------------        
+0000107E                            72  CARRYEXIST
+0000107E  33FC 0001 00008010        73      MOVE.W  #$1,    CarryBit
+00001086  60DE                      74      BRA ADDCONSECUTIVE
+00001088                            75  
+00001088                            76  DONE
+00001088  43F9 0000115D             77      LEA PinrtAddress,   A1  
+0000108E  103C 000E                 78      MOVE.B  #14,    D0  
+00001092  4E4F                      79      TRAP    #15 
+00001094                            80      
+00001094  103C 000F                 81      MOVE.B  #15,    D0  
+00001098  143C 0010                 82      MOVE.B  #16,    D2  
+0000109C  2239 00008000             83      MOVE.L Addr1,  D1    
+000010A2  4E4F                      84      TRAP    #15 
+000010A4                            85          
+000010A4  43F9 0000117C             86      LEA CRLFMESSAGE,    A1  
+000010AA  103C 000E                 87      MOVE.B  #14,    D0  
+000010AE  4E4F                      88      TRAP    #15 
+000010B0                            89      
+000010B0  43F9 00001144             90      LEA PrintADD,   A1  
+000010B6  103C 000E                 91      MOVE.B  #14,    D0  
+000010BA  4E4F                      92      TRAP    #15     
+000010BC                            93      
+000010BC  103C 000F                 94      MOVE.B  #15,    D0  
+000010C0  143C 0010                 95      MOVE.B  #16,    D2  
+000010C4  3239 00008004             96      MOVE.W  Addsum, D1   
+000010CA  4E4F                      97      TRAP    #15 
+000010CC                            98      
+000010CC  43F9 0000117C             99      LEA CRLFMESSAGE,    A1  
+000010D2  103C 000E                100      MOVE.B  #14,    D0  
+000010D6  4E4F                     101      TRAP    #15
+000010D8                           102  
+000010D8  43F9 00001167            103      LEA  PrintCarry,    A1  
+000010DE  103C 000E                104      MOVE.B  #14,    D0  
+000010E2  4E4F                     105      TRAP    #15 
+000010E4                           106      
+000010E4  103C 000F                107      MOVE.B  #15,    D0  
+000010E8  143C 0010                108      MOVE.B  #16,    D2  
+000010EC  3239 00008010            109      MOVE.W  CarryBit,   D1  
+000010F2  4E4F                     110      TRAP    #15 
+000010F4                           111      
+000010F4  43F9 0000117C            112      LEA CRLFMESSAGE,    A1  
+000010FA  103C 000E                113      MOVE.B  #14,    D0  
+000010FE  4E4F                     114      TRAP    #15
+00001100                           115     
+00001100  43F9 00001173            116      LEA BYE,    A1  
+00001106  103C 000E                117      MOVE.B  #14,    D0  
+0000110A  4E4F                     118      TRAP    #15 
+0000110C                           119      
+0000110C                           120  
+0000110C                           121  * Put program code here
+0000110C                           122  
+0000110C  FFFF FFFF                123      SIMHALT             ; halt simulator
+00001110                           124  
+00001110                           125  * Put variables and constants here
+00001110  =0000000D                126  CR  EQU $0D 
+00001110  =0000000A                127  LF  EQU $0A 
+00001110= 57 65 6C 63 6F 6D ...    128  WelcomeMessage DC.B 'Welcome to Pattern Finding and Cummlative Program', CR, LF, 0
+00001144= 53 75 6D 20 6F 66 ...    129  PrintADD    DC.B    'Sum of 256 Consequtive: ', 0
+0000115D= 41 64 64 72 65 73 ...    130  PinrtAddress    DC.B    'Address :',    0    
+00001167= 43 61 72 72 79 20 ...    131  PrintCarry  DC.B    'Carry Bit: ',  0      
+00001173= 47 6F 6F 64 20 42 ...    132  BYE DC.B    'Good Bye', 0  
+0000117C= 0D 0A 00                 133  CRLFMESSAGE DC.B    '', CR, LF, 0    
+0000117F                           134  
+0000117F                           135      END    START        ; last line of source   
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ADDCONSECUTIVE      1066
+ADDONE              1
+ADDR1               8000
+ADDSUM              8004
+BYE                 1173
+CARRYBIT            8010
+CARRYEXIST          107E
+COMPAREADDRESS      B000
+CR                  D
+CRLFMESSAGE         117C
+DONE                1088
+ENDADDRESS          6000
+FOUND               1048
+LF                  A
+MOVENEXT            1044
+NOTFOUND            1052
+PINRTADDRESS        115D
+PRINTADD            1144
+PRINTCARRY          1167
+SEARCH              102A
+SETUPADD            1060
+START               1000
+STARTADDRESS        4000
+WELCOMEMESSAGE      1110
